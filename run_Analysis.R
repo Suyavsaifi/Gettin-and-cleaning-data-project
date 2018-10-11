@@ -1,18 +1,4 @@
-##############################################################################
-#
-# FILE
-#   run_analysis.R
-#
-# OVERVIEW
-#   Using data collected from the accelerometers from the Samsung Galaxy S 
-#   smartphone, work with the data and make a clean data set, outputting the
-#   resulting tidy data to a file named "tidy_data.txt".
-#   See README.md for details.
-#
-
 library(dplyr)
-
-
 
 # download zip file containing data if it hasn't already been downloaded
 zipUrl <- "https://d396qusza40orc.cloudfront.net/getdata%2Fprojectfiles%2FUCI%20HAR%20Dataset.zip"
@@ -27,7 +13,6 @@ dataPath <- "UCI HAR Dataset"
 if (!file.exists(dataPath)) {
   unzip(zipFile)
 }
-
 
 
 # read training data
@@ -50,20 +35,14 @@ activities <- read.table(file.path(dataPath, "activity_labels.txt"))
 colnames(activities) <- c("activityId", "activityLabel")
 
 
-
 # concatenate individual data tables to make single data table
 humanActivity <- rbind(
   cbind(trainingSubjects, trainingValues, trainingActivity),
   cbind(testSubjects, testValues, testActivity)
 )
 
-# remove individual data tables to save memory
-rm(trainingSubjects, trainingValues, trainingActivity, 
-   testSubjects, testValues, testActivity)
-
 # assign column names
 colnames(humanActivity) <- c("subject", features[, 2], "activity")
-
 
 # determine columns of data set to keep based on column name...
 columnsToKeep <- grepl("subject|activity|mean|std", colnames(humanActivity))
@@ -71,13 +50,9 @@ columnsToKeep <- grepl("subject|activity|mean|std", colnames(humanActivity))
 # ... and keep data in these columns only
 humanActivity <- humanActivity[, columnsToKeep]
 
-
-
 # replace activity values with named factor levels
 humanActivity$activity <- factor(humanActivity$activity, 
                                  levels = activities[, 1], labels = activities[, 2])
-
-
 
 # get column names
 humanActivityCols <- colnames(humanActivity)
